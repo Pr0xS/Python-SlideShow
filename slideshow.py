@@ -11,6 +11,7 @@ import threading
 import tkinter
 from PIL import Image, ImageTk
 
+
 class FileManager:
     extensions = {'jpeg', 'jpg', 'png'}
     files = []
@@ -19,7 +20,6 @@ class FileManager:
         self.path = args.path
 
     def getFiles(self):
-        print('path: %s' % (self.path))
         if self.path:
             os.chdir(self.path)
         
@@ -57,7 +57,6 @@ class SlideShow:
         self.updateTimer()
         self.root.mainloop()
 
-
     def setDisplay(self):
         self.root = tkinter.Tk()
         self.screen['width'] = self.root.winfo_screenwidth()
@@ -87,7 +86,6 @@ class SlideShow:
         self.root.bind("<Down>", self.showNextImage)
 
     def configuration(self):
-        print(self.parameters)
         if self.parameters.random:
             random.shuffle(self.imagesList)
 
@@ -97,7 +95,6 @@ class SlideShow:
         
         if self.parameters.time:
             self.slide_time = self.parameters.time
-
 
     def updateTimer(self):
         if not self.pause:
@@ -137,7 +134,6 @@ class SlideShow:
         self.currentPosition -= 1
         if image:
             self.displayImage(image)
-
 
     def displayImage(self, image):
         if self.parameters.verbose:
@@ -245,7 +241,6 @@ class ImagesCache():
         self.start_node = self.start_node.next
         self.start_node.prev = None
 
-
     def delete_end(self):
         if self.end_node is None:
             return
@@ -303,6 +298,12 @@ def parse_arguments():
     Simple slideshow written in pyhton with a buffer that allow to preload images for a smoother transition.
     This slideshow will allow form randomize the order of the images, change the time between images (in seconds) and some other features.
     All the images will be resized to full screen.
+
+    Keyboard Controls:
+        <Escape> <q>                Exit
+        <space>                     Pause/Unpause
+        <Return> <Right> <Down>     Next image
+        <Left>   <Up>               Previous image
     '''
     epilog = '''
 
@@ -339,7 +340,6 @@ EXAMPLES:
     return args
 
 def main(args):
-    print(os.getcwd())
     fileManager = FileManager(args)
     fileManager.getFiles()
     SlideShow(fileManager.files, args)
