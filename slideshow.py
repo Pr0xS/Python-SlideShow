@@ -5,9 +5,8 @@ import os
 import argparse
 import random
 import time
-
-import threading
 import re
+import threading
 
 import tkinter
 from PIL import Image, ImageTk
@@ -36,6 +35,7 @@ class FileManager:
             return True
         else:
             return False
+
 
 class SlideShow:
     screen = {}
@@ -110,11 +110,6 @@ class SlideShow:
                     nextTime = 0
                 self.root.after(nextTime, self.updateTimer)
 
-    def showImage(self, filename):
-        self.displayImage(filename)
-        self.lastTimeView = time.time()
-
-
     def exit(self, e = None):
         self.root.destroy()
 
@@ -147,15 +142,14 @@ class SlideShow:
     def displayImage(self, image):
         if self.parameters.verbose:
             print('Current Image: %s' % (image.name))
-            
+
         self.label.configure(image = image.imageTk)
         self.label.image = image.imageTk
         self.lastTimeView = time.time()
 
+
 class ImagesCache():
     max = 5
-    saved_next = 0
-    seved_prev = 0
 
     def __init__(self, imageManager, imagesList):
         self.imageManager = imageManager
@@ -164,6 +158,7 @@ class ImagesCache():
         self.current_node = None
         self.start_node = None
         self.end_node = None
+
         self.loadFirst()
         self.e = threading.Event()
         self.updater = threading.Thread(target=self.updateImages, args=(self.e,), daemon=True)
@@ -268,6 +263,7 @@ class ImageNode():
         self.next = None
         self.prev = None
 
+
 class ImageManager():
     def __init__(self, screen):
         self.width = screen['width']
@@ -295,10 +291,12 @@ class ImageManager():
 
         return image
 
+
 class MyImage():
     def __init__(self, imageTk, name):
         self.imageTk = imageTk
         self.name = name
+
 
 def parse_arguments():
     description = '''
@@ -337,12 +335,8 @@ EXAMPLES:
     # parser.add_argument('-R', '--recursive', action='store_true', help='Display images in subdirectories too')
     # parser.add_argument('--depth', type=int, help='Max depth of subdirectories to look for when recursivity is on. Default depth is 3')
 
-
     args = parser.parse_args()
-
     return args
-
-
 
 def main(args):
     print(os.getcwd())
