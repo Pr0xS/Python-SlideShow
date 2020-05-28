@@ -128,25 +128,28 @@ class SlideShow:
             self.lastTimeView = time.time()
             return
 
-        imageTk = self.imagesCache.getNextImage()
+        image = self.imagesCache.getNextImage()
         self.currentPosition += 1        
-        if imageTk:
-            self.displayImage(imageTk)
+        if image:
+            self.displayImage(image)
 
     def showPrevImage(self, e = None):
         if not self.parameters.loop and self.currentPosition - 1 < 0:
             self.lastTimeView = time.time()
             return
 
-        imageTk = self.imagesCache.getPreviousImage()
+        image = self.imagesCache.getPreviousImage()
         self.currentPosition -= 1
-        if imageTk:
-            self.displayImage(imageTk)
+        if image:
+            self.displayImage(image)
 
 
-    def displayImage(self, imageTk):
-        self.label.configure(image = imageTk)
-        self.label.image = imageTk
+    def displayImage(self, image):
+        if self.parameters.verbose:
+            print('Current Image: %s' % (image.name))
+            
+        self.label.configure(image = image.imageTk)
+        self.label.image = image.imageTk
         self.lastTimeView = time.time()
 
 class ImagesCache():
@@ -166,84 +169,72 @@ class ImagesCache():
         self.updater = threading.Thread(target=self.updateImages, args=(self.e,), daemon=True)
         self.updater.start()
 
-    def loadImages(self):
-        for x in self.imagesList[:self.max]:
-            self.insert_end(self.imageManager.loadImage(x))
-
-        for x in self.imagesList[self.imagesListSize - self.max :]:
-            self.insert_start(self.imageManager.loadImage(x))
-
     def loadFirst(self):
         self.insert_start(self.imageManager.loadImage(self.imagesList[0]))
 
     def updateImages(self, e):
         while True:
-            print("Updating Images")
             while (self.end_node.position - self.current_node.position) < self.max:
-                print("updateImages info: %s, %s, %s" % (self.end_node.position, self.end_node.position + 1, (self.end_node.position + 1) % self.imagesListSize))
-                self.insert_end(self.imageManager.loadImage(self.imagesList[(self.end_node.position + 1) % self.imagesListSize]))
+                id = (self.end_node.position + 1) % self.imagesListSize
+                self.insert_end(self.imageManager.loadImage(self.imagesList[id]))
 
             while self.end_node.position - self.current_node.position > self.max:
-                print('delete end')
                 self.delete_end()
 
             while self.current_node.position - self.start_node.position < self.max:
-                print("updateImages info: %s, %s, %s" % (self.start_node.position, self.start_node.position - 1, (self.start_node.position - 1) % self.imagesListSize))
-                self.insert_start(self.imageManager.loadImage(self.imagesList[(self.start_node.position - 1) % self.imagesListSize]))
+                id = (self.start_node.position - 1) % self.imagesListSize
+                self.insert_start(self.imageManager.loadImage(self.imagesList[id]))
 
             while self.current_node.position - self.start_node.position > self.max:
-                print('delete start')
                 self.delete_start()
 
             e.wait()
             e.clear()
 
     def getCurrentImage(self):
-        return self.current_node.imageTk
+        return self.current_node.image
 
     def getNextImage(self):
-        print('getNextImage')
         self.e.set()
         if self.current_node.next:
             self.current_node = self.current_node.next
-            imageTk = self.current_node.imageTk
-            return imageTk
+            image = self.current_node.image
+            return image
         else:
             return None
 
     def getPreviousImage(self):
-        print('getPreviousImage')
         self.e.set()
         if self.current_node.prev:
             self.current_node = self.current_node.prev
-            imageTk = self.current_node.imageTk
-            return imageTk
+            image = self.current_node.image
+            return image
         else:
             return None
 
-    def insert_start(self, imageTk):
+    def insert_start(self, image):
         if self.start_node is None:
-            self.start_node = ImageNode(imageTk)
+            self.start_node = ImageNode(image)
             self.start_node.position = 0
             self.end_node = self.start_node
             self.current_node = self.start_node
 
         else:
-            new_node = ImageNode(imageTk)
+            new_node = ImageNode(image)
             new_node.position = self.start_node.position - 1
             new_node.next = self.start_node
             self.start_node.prev = new_node
             self.start_node = new_node
 
-    def insert_end(self, imageTk):
+    def insert_end(self, image):
         if self.start_node is None:
-            self.start_node = ImageNode(imageTk)
+            self.start_node = ImageNode(image)
             self.start_node.position = 0
             self.end_node = self.start_node
             self.current_node = self.start_node
 
         else:
-            new_node = ImageNode(imageTk)
+            new_node = ImageNode(image)
             new_node.position = self.end_node.position + 1
             new_node.prev = self.end_node
             self.end_node.next = new_node
@@ -270,17 +261,9 @@ class ImagesCache():
         self.end_node.next = None
 
 
-    def print(self):
-        node = self.start_node
-        while(node.next):
-            print(node.imageTk)
-            node = node.next
-
-        print(node.imageTk)
-
 class ImageNode():
-    def __init__(self, imageTk):
-        self.imageTk = imageTk
+    def __init__(self, image):
+        self.image = image
         self.position = 0
         self.next = None
         self.prev = None
@@ -298,8 +281,9 @@ class ImageManager():
             image = self.resizeImage(image)
 
         imageTk = ImageTk.PhotoImage(image)
+        name = filename
 
-        return imageTk
+        return MyImage(imageTk, name)
 
     def resizeImage(self, image):
         img_width, img_height = image.size
@@ -310,6 +294,11 @@ class ImageManager():
         image = image.resize((img_width, img_height), Image.ANTIALIAS)
 
         return image
+
+class MyImage():
+    def __init__(self, imageTk, name):
+        self.imageTk = imageTk
+        self.name = name
 
 def parse_arguments():
     description = '''
@@ -344,6 +333,7 @@ EXAMPLES:
     parser.add_argument('-p', '--path', help='the path to the folder to show in the slideshow. If no path is presented, the current folder will be displayed')
     parser.add_argument('-l', '--loop', action='store_true', help='Once reached the last image, start again from the begining')
     parser.add_argument('-f', '--find', help='Show only images that containg certaing word in thier filename')
+    parser.add_argument('-v', '--verbose', action='store_true', help='Show the name of the image currently being dilsplayed on the console')
     # parser.add_argument('-R', '--recursive', action='store_true', help='Display images in subdirectories too')
     # parser.add_argument('--depth', type=int, help='Max depth of subdirectories to look for when recursivity is on. Default depth is 3')
 
