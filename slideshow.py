@@ -16,12 +16,11 @@ class FileManager:
     extensions = {'jpeg', 'jpg', 'png'}
     files = []
 
-    def __init__(self, path, recursive = False, depth = 3):
-        self.path = path
-        self.recursive = recursive
-        self. depth = depth
+    def __init__(self, args):
+        self.path = args.path
 
     def getFiles(self):
+        print('path: %s' % (self.path))
         if self.path:
             os.chdir(self.path)
         
@@ -313,12 +312,38 @@ class ImageManager():
         return image
 
 def parse_arguments():
-    parser = argparse.ArgumentParser(description='Simple slideshow written in python')
-    parser.add_argument('-r', '--random', action='store_true', help='The images will be displayed with random order')
+    description = '''
+    Simple slideshow written in pyhton with a buffer that allow to preload images for a smoother transition.
+    This slideshow will allow form randomize the order of the images, change the time between images (in seconds) and some other features.
+    All the images will be resized to full screen.
+    '''
+    epilog = '''
+
+EXAMPLES:
+
+    python3 slideshow.py -r
+        This command will show all the images in the current folder with a random order
+    
+    python3 slideshow.py -t 3 -l
+        This command will show all the iamges in the curent folder with 3 seconds between then (-t 3) and once it reach the last image it will start from the beggining (-l)
+
+    python3 slideshow.py -p /home/user/pictures
+        This command will show all the images in the folder "pictures" situated at "/home/user/pictures/"
+
+    python3 slideshow.py -r -f moon
+        This command will show all the images in the current folder that has "moon" in their name in a random order
+    '''
+
+
+    parser = argparse.ArgumentParser(
+        description=description,
+        epilog=epilog, formatter_class=argparse.RawDescriptionHelpFormatter
+        )
+    parser.add_argument('-r', '--random', action='store_true', help='The images will be displayed in random order')
     parser.add_argument('-t', '--time', type=int, help='It defines the time it will take to slide a image in seconds. The default time is 5 seconds')
-    parser.add_argument('-p', '--path', help='the path to the folder to show in the slideshow. If no path is presented, the current folder will be displayed', default='.')
+    parser.add_argument('-p', '--path', help='the path to the folder to show in the slideshow. If no path is presented, the current folder will be displayed')
     parser.add_argument('-l', '--loop', action='store_true', help='Once reached the last image, start again from the begining')
-    parser.add_argument('-f', '--find', help='Show only images that containg certaing word')
+    parser.add_argument('-f', '--find', help='Show only images that containg certaing word in thier filename')
     # parser.add_argument('-R', '--recursive', action='store_true', help='Display images in subdirectories too')
     # parser.add_argument('--depth', type=int, help='Max depth of subdirectories to look for when recursivity is on. Default depth is 3')
 
@@ -331,7 +356,7 @@ def parse_arguments():
 
 def main(args):
     print(os.getcwd())
-    fileManager = FileManager('')
+    fileManager = FileManager(args)
     fileManager.getFiles()
     SlideShow(fileManager.files, args)
 
