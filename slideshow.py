@@ -47,6 +47,8 @@ class SlideShow:
         self.parameters = parameters
         self.imagesList = imagesList
 
+        self.parameters.loop = True
+
         self.setDisplay()
         self.setKeyBindings()
         self.configuration()
@@ -116,14 +118,20 @@ class SlideShow:
             self.root.after(self.slide_time * 1000, self.updateTimer)
 
     def showNextImage(self, e = None):
+        time1 = time.time()
         if not self.parameters.loop and self.currentPosition + 1 > len(self.imagesList) - 1:
             self.lastTimeView = time.time()
             return
 
+
         image = self.imagesCache.getNextImage()
+
         self.currentPosition += 1        
         if image:
             self.displayImage(image)
+
+        time2 = time.time()
+        print('Show next image time %f' % (time2 - time1))
 
     def showPrevImage(self, e = None):
         if not self.parameters.loop and self.currentPosition - 1 < 0:
@@ -137,7 +145,7 @@ class SlideShow:
 
     def displayImage(self, image):
         if self.parameters.verbose:
-            print('Current Image: %s' % (image.name))
+            print('Current Image: %.5f' % (image.name))
 
         self.label.configure(image = image.imageTk)
         self.label.image = image.imageTk
@@ -165,21 +173,25 @@ class ImagesCache():
 
     def updateImages(self, e):
         while True:
-            while (self.end_node.position - self.current_node.position) < self.max:
-                id = (self.end_node.position + 1) % self.imagesListSize
-                self.insert_end(self.imageManager.loadImage(self.imagesList[id]))
+            next_preload = self.end_node.position - self.current_node.position
+            if next_preload < self.max:
+                for _ in range(self.max - next_preload):
+                    self.insert_end(self.imageManager.loadImage(self.imagesList[self.end_node.position % self.imagesListSize]))
+            if next_preload > self.max:
+                for _ in range(next_preload - self.max):
+                    self.delete_start()
 
-            while self.end_node.position - self.current_node.position > self.max:
-                self.delete_end()
+            previous_preload = self.current_node.position - self.end_node.position
+            if previous_preload < self.max:
+                for _ in range(self.max - previous_preload):
+                    self.insert_start(self.imageManager.loadImage(self.imagesList[self.start_node.position % self.imagesListSize]))
+            if previous_preload > self.max:
+                for _ in range(previous_preload - self.max):
+                    self.delete_end()
 
-            while self.current_node.position - self.start_node.position < self.max:
-                id = (self.start_node.position - 1) % self.imagesListSize
-                self.insert_start(self.imageManager.loadImage(self.imagesList[id]))
-
-            while self.current_node.position - self.start_node.position > self.max:
-                self.delete_start()
-
+            print('Waiting')
             e.wait()
+            print('Continuing')
             e.clear()
 
     def getCurrentImage(self):
