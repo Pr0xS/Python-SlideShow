@@ -47,8 +47,6 @@ class SlideShow:
         self.parameters = parameters
         self.imagesList = imagesList
 
-        self.parameters.loop = True
-
         self.setDisplay()
         self.setKeyBindings()
         self.configuration()
@@ -171,31 +169,26 @@ class ImagesCache():
         while True:
             print('Start: %s, Current %s, End: %s' % (self.start_node.position, self.current_node.position, self.end_node.position))
             next_preloaded = self.end_node.position - self.current_node.position
-            print('next_preload: %s' % (next_preloaded))
             if next_preloaded < self.max:
                 for _ in range(self.max - next_preloaded):
-                    print('loading end image %s' % (self.end_node.position % self.imagesListSize))
-                    self.insert_end(self.imageManager.loadImage(self.imagesList[self.end_node.position % self.imagesListSize]))
+                    print('\tloading end image %s' % (self.end_node.position % self.imagesListSize))
+                    self.insert_end(self.imageManager.loadImage(self.imagesList[(self.end_node.position + 1) % self.imagesListSize]))
             if next_preloaded > self.max:
                 for _ in range(next_preloaded - self.max):
-                    print('delete end %s' % (self.end_node.position))
+                    print('\tdelete end %s' % (self.end_node.position))
                     self.delete_end()
 
-            print('2) Start: %s, Current %s, End: %s' % (self.start_node.position, self.current_node.position, self.end_node.position))
             previous_preloaded = self.current_node.position - self.start_node.position
-            print('previous_preload %s' % (previous_preloaded))
             if previous_preloaded < self.max:
                 for _ in range(self.max - previous_preloaded):
-                    print('loading start image %s' % (self.start_node.position % self.imagesListSize))
+                    print('\tloading start image %s' % (self.start_node.position % self.imagesListSize))
                     self.insert_start(self.imageManager.loadImage(self.imagesList[self.start_node.position % self.imagesListSize]))
             if previous_preloaded > self.max:
                 for _ in range(previous_preloaded - self.max):
-                    print('delete start %s' % (self.start_node.position))
+                    print('\tdelete start %s' % (self.start_node.position))
                     self.delete_start()
 
-            print('Waiting', flush=True)
             e.wait()
-            print('Continuing', flush=True)
             e.clear()
 
     def getCurrentImage(self):
