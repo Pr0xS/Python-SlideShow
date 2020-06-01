@@ -28,10 +28,6 @@ class FileManager:
                 if (not entry.is_dir()):
                     if (self.checkFileExtension(entry.name)):
                         self.files.append(entry.name)
-        
-        if len(self.files) == 0:
-            print('[-] No images could be found... Exiting')
-            sys.exit(-1)
 
     def checkFileExtension(self, file):
         extension = os.path.splitext(file)[1]
@@ -54,6 +50,12 @@ class SlideShow:
         self.setDisplay()
         self.setKeyBindings()
         self.configuration()
+                
+        if len(self.imagesList) == 0:
+            print('[-] No images could be found... Exiting')
+            sys.exit(-1)
+        if self.parameters.verbosity == 1:
+            print('[+] Loaded %i images' % (len(self.imagesList)))
 
         self.imagesCache = ImagesCache(self.imageManager, self.imagesList, self.parameters)
         self.displayImage(self.imagesCache.getCurrentImage())
@@ -156,9 +158,15 @@ class ImagesCache():
     def __init__(self, imageManager, imagesList, parameters):
         self.imageManager = imageManager
         self.imagesList = imagesList
-        print(parameters)
-        if parameters.cache:
-            self.cache = parameters.cache
+        
+        if parameters.cache != None:
+            print(parameters.cache)
+            if parameters.cache < 1:
+                print('[-] %s is not a valid cache size, using 1 instead' % (parameters.cache))
+                self.cache = 1
+            else:
+                self.cache = parameters.cache
+                
         self.verbosity = parameters.verbosity
         self.imagesListSize = len(self.imagesList)
         self.current_node = None
@@ -182,7 +190,7 @@ class ImagesCache():
             if next_preloaded < self.cache:
                 for _ in range(self.cache - next_preloaded):
                     if self.verbosity == 2:
-                        print('\tloading end image %s' % (self.end_node.position % self.imagesListSize))
+                        print('\tloading end image %s: (%s -> %s)' % (self.end_node.position + 1, (self.end_node.position + 1) % self.imagesListSize, self.imagesList[(self.end_node.position + 1) % self.imagesListSize]))
                     self.insert_end(self.imageManager.loadImage(self.imagesList[(self.end_node.position + 1) % self.imagesListSize]))
             if next_preloaded > self.cache:
                 for _ in range(next_preloaded - self.cache):
@@ -194,7 +202,7 @@ class ImagesCache():
             if previous_preloaded < self.cache:
                 for _ in range(self.cache - previous_preloaded):
                     if self.verbosity == 2:
-                        print('\tloading start image %s' % ((self.start_node.position - 1) % self.imagesListSize))
+                        print('\tloading start image %s: (%s -> %s)' % (self.start_node.position -1, (self.start_node.position - 1) % self.imagesListSize, self.imagesList[(self.start_node.position - 1) % self.imagesListSize]))
                     self.insert_start(self.imageManager.loadImage(self.imagesList[(self.start_node.position - 1) % self.imagesListSize]))
             if previous_preloaded > self.cache:
                 for _ in range(previous_preloaded - self.cache):
@@ -355,7 +363,7 @@ EXAMPLES:
     parser.add_argument('-p', '--path', help='the path to the folder to show in the slideshow. If no path is presented, the current folder will be displayed')
     parser.add_argument('-l', '--loop', action='store_true', help='Once reached the last image, start again from the begining')
     parser.add_argument('-f', '--find', help='Show only images that containg certaing word in thier filename')
-    parser.add_argument('-cache', type=int, help='It allow you to modify how many images are loaded in advance, this is specially usefull when working with big images that take some time to load and resize. The default value is 3')
+    parser.add_argument('--cache', type=int, help='It allow you to modify how many images are loaded in advance, this is specially usefull when working with big images that take some time to load and resize. The default value is 3')
     parser.add_argument('-v', '--verbosity', action='count', help='(-v) Show the name of the image currently being dilsplayed on the console. (-vv) Show what images are being loaded and deleted')
     # parser.add_argument('-R', '--recursive', action='store_true', help='Display images in subdirectories too')
     # parser.add_argument('--depth', type=int, help='Max depth of subdirectories to look for when recursivity is on. Default depth is 3')
