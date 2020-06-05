@@ -95,8 +95,8 @@ class SlideShow:
         if self.parameters.random:
             random.shuffle(self.imagesList)
 
-        if self.parameters.find:
-            r = re.compile('.*%s.*' % (self.parameters.find))
+        if self.parameters.filter:
+            r = re.compile('.*%s.*' % (self.parameters.filter))
             self.imagesList = list(filter(r.match, self.imagesList))
         
         if self.parameters.time:
@@ -344,7 +344,7 @@ EXAMPLES:
         This command will show all the images in the current folder with a random order
     
     python3 slideshow.py -t 3 -l
-        This command will show all the iamges in the curent folder with 3 seconds between then (-t 3) and once it reach the last image it will start from the beggining (-l)
+        This command will show all the images in the current folder with 3 seconds between them (-t 3) and once it reaches the last image it will start from the beginning (-l)
 
     python3 slideshow.py -p /home/user/pictures
         This command will show all the images in the folder "pictures" situated at "/home/user/pictures/"
@@ -359,11 +359,11 @@ EXAMPLES:
         epilog=epilog, formatter_class=argparse.RawDescriptionHelpFormatter
         )
     parser.add_argument('-r', '--random', action='store_true', help='The images will be displayed in random order')
-    parser.add_argument('-t', '--time', type=int, help='It defines the time it will take to slide a image in seconds. The default time is 5 seconds')
+    parser.add_argument('-t', '--time', type=int, help='It defines the time it will take to slide an image in seconds. The default time is 5 seconds')
     parser.add_argument('-p', '--path', help='the path to the folder to show in the slideshow. If no path is presented, the current folder will be displayed')
-    parser.add_argument('-l', '--loop', action='store_true', help='Once reached the last image, start again from the begining')
-    parser.add_argument('-f', '--find', help='Show only images that containg certaing word in thier filename')
-    parser.add_argument('--cache', type=int, help='It allow you to modify how many images are loaded in advance, this is specially usefull when working with big images that take some time to load and resize. The default value is 3')
+    parser.add_argument('-l', '--loop', action='store_true', help='Once reached the last image, start again from the beginning')
+    parser.add_argument('-f', '--filter', help='Show only images that contain certain word in their filename')
+    parser.add_argument('--cache', type=int, help='It allow you to modify how many images are loaded in advance, this is specially useful when working with big images that take some time to load and resize. The default value is 3')
     parser.add_argument('-v', '--verbosity', action='count', help='(-v) Show the name of the image currently being dilsplayed on the console. (-vv) Show what images are being loaded and deleted')
     # parser.add_argument('-R', '--recursive', action='store_true', help='Display images in subdirectories too')
     # parser.add_argument('--depth', type=int, help='Max depth of subdirectories to look for when recursivity is on. Default depth is 3')
