@@ -3,11 +3,11 @@ Simple slideshow written in pyhton3 with a buffer that allow to preload images f
   
   Some of the features are:
   
-    * Randomize order
-    * Set custom time between images
-    * Loop the images
-    * Select a folder for the images to show (if not, the current folder will be used)
-    * Find option for showing only the images that contain certain word in the filename
+* Randomize order
+* Set custom time between images
+* Loop the images
+* Select a folder for the images to show (if not, the current folder will be used)
+* Find option for showing only the images that contain certain word in the filename
     
 ### The buffer
 The buffer will preload images in advance in for a smoother transition, especially if the files are big
