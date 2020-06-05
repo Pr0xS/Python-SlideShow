@@ -10,7 +10,7 @@ Simple slideshow written in pyhton3 with a buffer that allow to preload images f
 * Select a folder for the images to show (if not, the current folder will be used)
 * Find option for showing only the images that contain certain word in the filename
 
-### The buffer
+The buffer
 
 The buffer will preload images in advance in for a smoother transition, especially if the files are big
 
@@ -18,7 +18,7 @@ It will load X following images and X previous images. The default size of the b
 
 ## Requirements
 
-```
+```markdown
 Python3
 Pillow 'pip install pillow' (7.0 or greater)
 ```
@@ -33,7 +33,7 @@ Pillow 'pip install pillow' (7.0 or greater)
 
 ## Keyboard Controls
 
-```
+```markdown
     <Escape> <q>                Exit
     <space>                     Pause/Unpause
     <Return> <Right> <Down>     Next image
@@ -42,7 +42,7 @@ Pillow 'pip install pillow' (7.0 or greater)
 
 ## Help
 
-```
+```markdown
   -h, --help            show this help message and exit
   -r, --random          The images will be displayed in random order
   -t TIME, --time TIME  It defines the time it will take to slide an image in
@@ -65,7 +65,7 @@ Pillow 'pip install pillow' (7.0 or greater)
 
 ## Examples
 
-```
+```markdown
     python3 slideshow.py -r
         This command will show all the images in the current folder with a random order
 
