@@ -11,7 +11,7 @@ Simple slideshow written in pyhton3 with a buffer that allow to preload images f
 * Find option for showing only the images that contain certain word in the filename
 * A buffer that will load images in advance for smoothers transitions
 
-The buffer will preload images in advance in for a smoother transition, especially if the files are big
+The buffer will preload images in advance in for a smoother transition, especially if the files are big.
 It will load X following images and X previous images. The default size of the buffer is 3 in both directions, which mean that 6 images will be loaded in memory at the same time
 
 ## Requirements
