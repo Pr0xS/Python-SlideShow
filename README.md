@@ -58,7 +58,7 @@ Pillow 'pip install pillow' (7.0 or greater)
 ```
 ## Examples
 ```
-python3 slideshow.py -r
+    python3 slideshow.py -r
         This command will show all the images in the current folder with a random order
         
     python3 slideshow.py -t 3 -l
