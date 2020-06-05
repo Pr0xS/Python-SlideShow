@@ -33,11 +33,12 @@ Pillow 'pip install pillow' (7.0 or greater)
 
 ## Keyboard Controls
 
+```
     <Escape> <q>                Exit
     <space>                     Pause/Unpause
     <Return> <Right> <Down>     Next image
     <Left>   <Up>               Previous image
-
+```
 
 ## Help
 
@@ -67,7 +68,7 @@ Pillow 'pip install pillow' (7.0 or greater)
 ```
     python3 slideshow.py -r
         This command will show all the images in the current folder with a random order
-        
+
     python3 slideshow.py -t 3 -l
         This command will show all the images in the current folder with 3 seconds between them (-t 3) and once it reaches the last image it will start from the beginning (-l)
 
