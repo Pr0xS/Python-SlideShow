@@ -1,4 +1,5 @@
 # Python-SlideShow
+
 Simple slideshow written in pyhton3 with a buffer that allow to preload images for a smoother transition.
   
   Some of the features are:
@@ -8,13 +9,15 @@ Simple slideshow written in pyhton3 with a buffer that allow to preload images f
 * Loop the images
 * Select a folder for the images to show (if not, the current folder will be used)
 * Find option for showing only the images that contain certain word in the filename
-    
+
 ### The buffer
+
 The buffer will preload images in advance in for a smoother transition, especially if the files are big
 
 It will load X following images and X previous images. The default size of the buffer is 3 in both directions, which mean that 6 images will be loaded in memory at the same time
 
 ## Requirements
+
 ```
 Python3
 Pillow 'pip install pillow' (7.0 or greater)
@@ -29,6 +32,7 @@ Pillow 'pip install pillow' (7.0 or greater)
 * Filter images: Show all
 
 ## Keyboard Controls
+
     <Escape> <q>                Exit
     <space>                     Pause/Unpause
     <Return> <Right> <Down>     Next image
@@ -36,6 +40,7 @@ Pillow 'pip install pillow' (7.0 or greater)
 
 
 ## Help
+
 ```
   -h, --help            show this help message and exit
   -r, --random          The images will be displayed in random order
@@ -56,7 +61,9 @@ Pillow 'pip install pillow' (7.0 or greater)
                         displayed on the console. (-vv) Show what images are
                         being loaded and deleted
 ```
+
 ## Examples
+
 ```
     python3 slideshow.py -r
         This command will show all the images in the current folder with a random order
